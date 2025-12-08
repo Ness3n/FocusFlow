@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Aquí puedes cambiar la pantalla que quieres mostrar
-                    HomeScreen()
+                    LoginScreen()
 
 
                     // Otras pantallas disponibles:

@@ -56,4 +56,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //my dependencies
+    // En app/build.gradle.kts dentro de dependencies:
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0") // O la versión que corresponda
 }
