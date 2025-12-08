@@ -60,4 +60,6 @@ dependencies {
     //my dependencies
     // En app/build.gradle.kts dentro de dependencies:
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0") // O la versión que corresponda
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 }
