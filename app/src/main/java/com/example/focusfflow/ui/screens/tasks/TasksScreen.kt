@@ -2,9 +2,11 @@ package com.example.focusfflow.ui.screens.tasks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,13 +15,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 import com.example.focusfflow.ui.screens.components.AppHeader
+import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 import com.example.focusfflow.ui.screens.components.TaskItem
 
 @Composable
-fun TasksScreen(navController: NavController) {
+fun TasksScreen(
+    navController: NavController,
+    viewModel: TasksViewModel = viewModel() // Inyectamos el ViewModel
+) {
+    // Observamos la lista de tareas. Cuando cambie el repositorio, esto se actualiza solo.
+    val taskList by viewModel.tasks.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,7 +39,7 @@ fun TasksScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Tasks",
+            text = "Mis Tareas",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.Black,
@@ -39,72 +48,52 @@ fun TasksScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Tarjeta con tareas
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+        // Si la lista está vacía, mostramos un mensaje
+        if (taskList.isEmpty()) {
+            Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                Text("No hay tareas aún. ¡Agrega una!", color = Color.Gray)
+            }
+        } else {
+            // LISTA DINÁMICA DE TAREAS
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f) // Ocupa el espacio disponible pero deja lugar al BottomBar
+                    .padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                // Tarea 1
-                TaskItem(
-                    title = "Mis Tareas",
-                    description = "Prioridad Media",
-                    status = "Registro\nCompleto",
-                    statusColor = Color(0xFF4CAF50)
-                )
-
-                Divider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    color = Color(0xFFE0E0E0)
-                )
-
-                // Tarea 2
-                TaskItem(
-                    title = "Leer 25 páginas",
-                    description = "Prioridad Media",
-                    timeInfo = "Brevedad 30 - 40 - 45min - SL",
-                    hasActions = true
-                )
-
-                Divider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    color = Color(0xFFE0E0E0)
-                )
-
-                // Tarea 3
-                TaskItem(
-                    title = "Estudiar programación",
-                    description = "Alta",
-                    timeInfo = "- - - 50 - 60min",
-                    hasActions = true
-                )
+                LazyColumn(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    items(taskList) { task ->
+                        TaskItem(
+                            title = task.title,
+                            description = task.description,
+                            status = if (task.priority.isNotEmpty()) "Prioridad: ${task.priority}" else null,
+                            statusColor = if(task.priority == "Alta") Color.Red else Color(0xFF4CAF50),
+                            timeInfo = if(task.duration.isNotEmpty()) "${task.duration} min" else null,
+                            hasActions = true
+                        )
+                        Divider(color = Color(0xFFE0E0E0), modifier = Modifier.padding(vertical = 8.dp))
+                    }
+                }
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Botón flotante para ir a agregar tarea
-        FloatingActionButton(
-            onClick = { navController.navigate("add_task") },
-            containerColor = Color(0xFF00C853),
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(bottom = 20.dp, end = 16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add",
-                tint = Color.White
-            )
+        // FAB
+        Box(modifier = Modifier.fillMaxWidth().padding(end = 16.dp, bottom = 20.dp), contentAlignment = Alignment.BottomEnd) {
+            FloatingActionButton(
+                onClick = { navController.navigate("add_task") },
+                containerColor = Color(0xFF00C853)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add", tint = Color.White)
+            }
         }
 
-        // Barra de navegación inferior
         BottomNavigationBar(navController)
     }
 }
