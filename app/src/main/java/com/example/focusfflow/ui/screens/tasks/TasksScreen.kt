@@ -2,7 +2,6 @@ package com.example.focusfflow.ui.screens.tasks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -14,12 +13,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 import com.example.focusfflow.ui.screens.components.AppHeader
 import com.example.focusfflow.ui.screens.components.TaskItem
 
 @Composable
-fun TasksScreen() {
+fun TasksScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,12 +89,13 @@ fun TasksScreen() {
 
         Spacer(modifier = Modifier.weight(1f))
 
+        // Botón flotante para ir a agregar tarea
         FloatingActionButton(
-            onClick = {},
+            onClick = { navController.navigate("add_task") },
             containerColor = Color(0xFF00C853),
             modifier = Modifier
                 .align(Alignment.End)
-                .padding(bottom = 80.dp, end = 16.dp)
+                .padding(bottom = 20.dp, end = 16.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
@@ -103,8 +104,7 @@ fun TasksScreen() {
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        BottomNavigationBar()
+        // Barra de navegación inferior
+        BottomNavigationBar(navController)
     }
 }

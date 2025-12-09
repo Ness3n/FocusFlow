@@ -2,7 +2,6 @@ package com.example.focusfflow.ui.screens.tasks.add
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -14,11 +13,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 import com.example.focusfflow.ui.screens.components.AppHeader
 
 @Composable
-fun AddTasksScreen() {
+fun AddTasksScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,7 +141,10 @@ fun AddTasksScreen() {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = {},
+                    onClick = {
+                        // Simular guardado y volver atrás
+                        navController.popBackStack()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
@@ -157,13 +160,13 @@ fun AddTasksScreen() {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Botón flotante
+        // Botón flotante (opcional en esta vista, pero si lo dejas no hace nada o vuelve a agregar)
         FloatingActionButton(
             onClick = {},
             containerColor = Color(0xFF00C853),
             modifier = Modifier
                 .align(Alignment.End)
-                .padding(bottom = 80.dp, end = 16.dp)
+                .padding(bottom = 20.dp, end = 16.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
@@ -172,8 +175,6 @@ fun AddTasksScreen() {
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        BottomNavigationBar()
+        BottomNavigationBar(navController)
     }
 }

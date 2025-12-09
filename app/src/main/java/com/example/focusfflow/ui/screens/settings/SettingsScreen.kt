@@ -1,13 +1,10 @@
 package com.example.focusfflow.ui.screens.settings
 
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,12 +13,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 import com.example.focusfflow.ui.screens.components.AppHeader
 import com.example.focusfflow.ui.screens.components.SettingsItem
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,14 +51,7 @@ fun SettingsScreen() {
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                SettingsItem(text = "Ajustes")
-
-                Divider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    color = Color(0xFFE0E0E0)
-                )
-
-                SettingsItem(text = "Configuración")
+                SettingsItem(text = "Ajustes de cuenta")
 
                 Divider(
                     modifier = Modifier.padding(vertical = 12.dp),
@@ -75,6 +66,22 @@ fun SettingsScreen() {
                 )
 
                 SettingsItem(text = "Modo oscuro")
+
+                Divider(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    color = Color(0xFFE0E0E0)
+                )
+
+                // Opción para Cerrar Sesión
+                SettingsItem(
+                    text = "Cerrar sesión",
+                    onClick = {
+                        // Navegar al login y borrar todo el historial para que no se pueda volver atrás
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
             }
         }
 
@@ -85,7 +92,7 @@ fun SettingsScreen() {
             containerColor = Color(0xFF00C853),
             modifier = Modifier
                 .align(Alignment.End)
-                .padding(bottom = 80.dp, end = 16.dp)
+                .padding(bottom = 20.dp, end = 16.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
@@ -94,8 +101,6 @@ fun SettingsScreen() {
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        BottomNavigationBar()
+        BottomNavigationBar(navController)
     }
 }
