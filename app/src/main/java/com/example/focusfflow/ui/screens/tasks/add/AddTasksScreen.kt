@@ -21,7 +21,7 @@ import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 @Composable
 fun AddTasksScreen(
     navController: NavController,
-    viewModel: AddTasksViewModel = viewModel() // Inyectamos el nuevo ViewModel
+    viewModel: AddTasksViewModel = viewModel() // Inyectamos el ViewModel
 ) {
     Column(
         modifier = Modifier
@@ -93,9 +93,10 @@ fun AddTasksScreen(
 
                 // Inputs Prioridad y Duración
                 Row(modifier = Modifier.fillMaxWidth()) {
+                    // CAMPO PRIORIDAD (CORREGIDO)
                     OutlinedTextField(
                         value = viewModel.priority,
-                        onValueChange = { viewModel.onTitleChange(it) }, // Nota: Deberías usar onPriorityChange, lo corregí abajo
+                        onValueChange = { viewModel.onPriorityChange(it) }, // <-- AQUÍ ESTABA EL ERROR
                         placeholder = { Text("Alta/Media", color = Color.LightGray) },
                         modifier = Modifier.weight(1f),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -104,7 +105,10 @@ fun AddTasksScreen(
                         ),
                         shape = RoundedCornerShape(8.dp)
                     )
+
                     Spacer(modifier = Modifier.width(8.dp))
+
+                    // CAMPO DURACIÓN
                     OutlinedTextField(
                         value = viewModel.duration,
                         onValueChange = { viewModel.onDurationChange(it) },
@@ -135,6 +139,22 @@ fun AddTasksScreen(
             }
         }
         Spacer(modifier = Modifier.weight(1f))
+
+        // Botón flotante opcional (si lo quieres mantener)
+        FloatingActionButton(
+            onClick = {},
+            containerColor = Color(0xFF00C853),
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(bottom = 20.dp, end = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add",
+                tint = Color.White
+            )
+        }
+
         BottomNavigationBar(navController)
     }
 }
