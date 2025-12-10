@@ -6,7 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,16 +14,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 import com.example.focusfflow.ui.screens.components.AppHeader
+import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 import com.example.focusfflow.ui.screens.components.SettingsItem
+import com.example.focusfflow.ui.screens.components.SettingsSwitchItem
 
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(
+    navController: NavController,
+    isDarkTheme: Boolean,          // <--- Recibimos estado
+    onThemeChange: (Boolean) -> Unit // <--- Recibimos acción
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         AppHeader()
 
@@ -33,50 +38,51 @@ fun SettingsScreen(navController: NavController) {
             text = "Settings",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Card de configuración
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                SettingsItem(text = "Ajustes de cuenta")
-
-                Divider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    color = Color(0xFFE0E0E0)
+                // 1. Navegar a Ajustes de Cuenta
+                SettingsItem(
+                    text = "Ajustes de cuenta",
+                    onClick = { navController.navigate("settings_account") }
                 )
 
-                SettingsItem(text = "Notificaciones")
+                Divider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFE0E0E0))
 
-                Divider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    color = Color(0xFFE0E0E0)
+                // 2. Navegar a Notificaciones
+                SettingsItem(
+                    text = "Notificaciones",
+                    onClick = { navController.navigate("settings_notifications") }
                 )
 
-                SettingsItem(text = "Modo oscuro")
+                Divider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFE0E0E0))
 
-                Divider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    color = Color(0xFFE0E0E0)
+                // 3. Switch de Modo Oscuro (Funciona al instante)
+                SettingsSwitchItem(
+                    text = "Modo oscuro",
+                    checked = isDarkTheme,
+                    onCheckedChange = { onThemeChange(it) } // Llama a la función en MainActivity
                 )
 
-                // Opción para Cerrar Sesión
+                Divider(modifier = Modifier.padding(vertical = 12.dp), color = Color(0xFFE0E0E0))
+
                 SettingsItem(
                     text = "Cerrar sesión",
                     onClick = {
-                        // Navegar al login y borrar todo el historial para que no se pueda volver atrás
                         navController.navigate("login") {
                             popUpTo(0) { inclusive = true }
                         }
@@ -87,18 +93,13 @@ fun SettingsScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.weight(1f))
 
+        // FAB (Opcional, si quieres mantenerlo)
         FloatingActionButton(
-            onClick = {},
+            onClick = { navController.navigate("add_task") },
             containerColor = Color(0xFF00C853),
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(bottom = 20.dp, end = 16.dp)
+            modifier = Modifier.align(Alignment.End).padding(bottom = 20.dp, end = 16.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add",
-                tint = Color.White
-            )
+            Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
         }
 
         BottomNavigationBar(navController)

@@ -34,9 +34,8 @@ fun TasksScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
+            .background(MaterialTheme.colorScheme.background) // <--- Fondo dinámico
     ) {
-        // 1. Header Superior
         AppHeader()
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -45,39 +44,35 @@ fun TasksScreen(
             text = "Mis Tareas",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onBackground, // <--- Texto dinámico
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 2. CONTENEDOR PRINCIPAL (Ocupa todo el espacio restante)
-        // Usamos un Box con weight(1f) para empujar la barra de menú al fondo
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // <--- ESTO ES LA CLAVE: Ocupa todo el alto disponible
+                .weight(1f)
                 .padding(horizontal = 16.dp)
         ) {
-
             if (taskList.isEmpty()) {
-                // --- DISEÑO DE ESTADO VACÍO MEJORADO ---
+                // ESTADO VACÍO
                 Column(
-                    modifier = Modifier.fillMaxSize(), // Centrar en todo el espacio disponible
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Círculo de fondo para el icono
                     Box(
                         modifier = Modifier
                             .size(100.dp)
-                            .background(Color.White, CircleShape),
+                            .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape), // <--- Círculo adaptable
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.List,
                             contentDescription = null,
-                            tint = Color(0xFF2196F3),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(48.dp)
                         )
                     }
@@ -88,7 +83,7 @@ fun TasksScreen(
                         text = "No tienes tareas pendientes",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onBackground // <--- Texto adaptable
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -96,22 +91,20 @@ fun TasksScreen(
                     Text(
                         text = "Organiza tu día agregando una nueva tarea\ncon el botón (+).",
                         fontSize = 14.sp,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, // <--- Texto secundario adaptable
                         textAlign = TextAlign.Center
                     )
                 }
 
             } else {
-                // --- LISTA DE TAREAS ---
+                // LISTA DE TAREAS
                 Card(
                     modifier = Modifier.fillMaxSize(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // <--- Card adaptable
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    LazyColumn(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
+                    LazyColumn(modifier = Modifier.padding(16.dp)) {
                         items(taskList) { task ->
                             TaskItem(
                                 title = task.title,
@@ -121,33 +114,25 @@ fun TasksScreen(
                                 timeInfo = if(task.duration.isNotEmpty() && task.duration != "0") "${task.duration} min" else null,
                                 hasActions = true
                             )
-                            Divider(color = Color(0xFFE0E0E0), modifier = Modifier.padding(vertical = 8.dp))
+                            Divider(
+                                color = MaterialTheme.colorScheme.outlineVariant, // <--- Divisor adaptable
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
                         }
                     }
                 }
             }
 
-            // 3. BOTÓN FLOTANTE (FAB)
-            // Lo ponemos dentro del Box alineado abajo a la derecha
-            // Así flota sobre la lista o sobre el diseño vacío
             FloatingActionButton(
                 onClick = { navController.navigate("add_task") },
                 containerColor = Color(0xFF00C853),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 16.dp, end = 8.dp)
+                modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 16.dp, end = 8.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
-                    tint = Color.White
-                )
+                Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-
-        // 4. Barra de Navegación (Siempre al final porque el Box de arriba tiene weight)
         BottomNavigationBar(navController)
     }
 }

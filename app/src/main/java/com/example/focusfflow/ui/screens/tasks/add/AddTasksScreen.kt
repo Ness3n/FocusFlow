@@ -21,12 +21,23 @@ import com.example.focusfflow.ui.screens.components.BottomNavigationBar
 @Composable
 fun AddTasksScreen(
     navController: NavController,
-    viewModel: AddTasksViewModel = viewModel() // Inyectamos el ViewModel
+    viewModel: AddTasksViewModel = viewModel()
 ) {
+    // Definimos colores predeterminados para los Inputs que se adapten al tema
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+        cursorColor = MaterialTheme.colorScheme.primary,
+        focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
+            .background(MaterialTheme.colorScheme.background) // <--- Fondo dinámico
     ) {
         AppHeader()
 
@@ -36,7 +47,7 @@ fun AddTasksScreen(
             text = "Add tasks",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onBackground, // <--- Texto dinámico
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
@@ -47,23 +58,20 @@ fun AddTasksScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // <--- Card dinámica
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("Agregar ítem", fontSize = 14.sp, color = Color.Gray)
+                Text("Agregar ítem", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // TÍTULO
                 OutlinedTextField(
                     value = viewModel.title,
                     onValueChange = { viewModel.onTitleChange(it) },
-                    placeholder = { Text("Titular de la actividad", color = Color.LightGray) },
+                    placeholder = { Text("Titular de la actividad") },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedBorderColor = Color(0xFF2196F3)
-                    ),
+                    colors = textFieldColors, // Usar colores dinámicos
                     shape = RoundedCornerShape(8.dp)
                 )
 
@@ -73,51 +81,42 @@ fun AddTasksScreen(
                 OutlinedTextField(
                     value = viewModel.description,
                     onValueChange = { viewModel.onDescriptionChange(it) },
-                    placeholder = { Text("Descripción (opcional)", color = Color.LightGray) },
+                    placeholder = { Text("Descripción (opcional)") },
                     modifier = Modifier.fillMaxWidth().height(100.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedBorderColor = Color(0xFF2196F3)
-                    ),
+                    colors = textFieldColors,
                     shape = RoundedCornerShape(8.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Prioridad y Duración (Labels)
+                // LABELS
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Prioridad", fontSize = 14.sp, color = Color.Black)
-                    Text("Duración (min)", fontSize = 14.sp, color = Color.Black)
+                    Text("Prioridad", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
+                    Text("Duración (min)", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Inputs Prioridad y Duración
+                // INPUTS
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    // CAMPO PRIORIDAD (CORREGIDO)
+                    // Prioridad
                     OutlinedTextField(
                         value = viewModel.priority,
-                        onValueChange = { viewModel.onPriorityChange(it) }, // <-- AQUÍ ESTABA EL ERROR
-                        placeholder = { Text("Alta/Media", color = Color.LightGray) },
+                        onValueChange = { viewModel.onPriorityChange(it) },
+                        placeholder = { Text("Alta/Media") },
                         modifier = Modifier.weight(1f),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color(0xFFE0E0E0),
-                            focusedBorderColor = Color(0xFF2196F3)
-                        ),
+                        colors = textFieldColors,
                         shape = RoundedCornerShape(8.dp)
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // CAMPO DURACIÓN
+                    // Duración
                     OutlinedTextField(
                         value = viewModel.duration,
                         onValueChange = { viewModel.onDurationChange(it) },
-                        placeholder = { Text("Min", color = Color.LightGray) },
+                        placeholder = { Text("Min") },
                         modifier = Modifier.width(90.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedBorderColor = Color(0xFFE0E0E0),
-                            focusedBorderColor = Color(0xFF2196F3)
-                        ),
+                        colors = textFieldColors,
                         shape = RoundedCornerShape(8.dp)
                     )
                 }
@@ -126,34 +125,18 @@ fun AddTasksScreen(
 
                 Button(
                     onClick = {
-                        viewModel.saveTask {
-                            navController.popBackStack() // Volver a la lista al guardar
-                        }
+                        viewModel.saveTask { navController.popBackStack() }
                     },
                     modifier = Modifier.fillMaxWidth().height(48.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Guardar datos", fontSize = 14.sp)
+                    Text("Guardar datos", fontSize = 14.sp, color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
 
-        // Botón flotante opcional (si lo quieres mantener)
-        FloatingActionButton(
-            onClick = {},
-            containerColor = Color(0xFF00C853),
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(bottom = 20.dp, end = 16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add",
-                tint = Color.White
-            )
-        }
+        Spacer(modifier = Modifier.weight(1f))
 
         BottomNavigationBar(navController)
     }
